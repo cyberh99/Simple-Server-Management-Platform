@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path,re_path
-from .views import HomePageView
+from .views import HomePageView,error404,error500
 from servidores.views import servidores
+from django.conf.urls import handler404, handler500
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
     path('users/', include('users.urls')),
@@ -25,3 +26,5 @@ urlpatterns = [
     re_path(r'^servidores/$',servidores,name="servidores"),
     re_path(r'^servidores/',include('servidores.urls')),
 ]
+handler404 = error404
+handler500 = error500
