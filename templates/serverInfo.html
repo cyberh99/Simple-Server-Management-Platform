@@ -1,6 +1,12 @@
 {% extends 'base.html'%}
 
 {% block content%}
-<h1>Server info page </h1>
-{{server.ipAddr}}
+    <h1> {{server.name}} datasheet </h1>
+    <div class="col-sm-9">
+        <form method="POST">
+            {% csrf_token %}
+            {{form}}
+            <button class="btn">Submit</button>
+        </form>
+    </div>
 {%endblock%}

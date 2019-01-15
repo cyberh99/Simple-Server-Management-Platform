@@ -22,8 +22,27 @@ def servidores(request):
 
 
 def serverInfo(request,serverName):
+
     if not  request.user.is_authenticated:
         return HttpResponseRedirect("/")
-    server = get_object_or_404(Servidor,name=serverName)
-    context = {'server':server}
-    return render(request,'serverInfo.html',context=context)
+    
+    actualServerObject = get_object_or_404(Servidor,name=serverName)
+
+    if request.method == "POST":        
+        form = ServerCreationForm(request.POST)
+        if form.is_valid():
+            newData = form.cleaned_data
+            if (newData["name"] != actualServerObject.name):
+                Servidor.objects.filter(ipAddr=newData["ipAddr"]).update(name=str(newData["name"]))
+                Servidor.objects.filter(ipAddr=newData["ipAddr"]).update(password=str(newData["ipAddr"]))
+        
+            Servidor.objects.filter(name=serverName).update(ipAddr=str(newData["ipAddr"]))
+            Servidor.objects.filter(name=serverName).update(password=str(newData["password"]))
+            return HttpResponseRedirect("/servidores")
+    
+    form = ServerCreationForm(initial={
+        'name':actualServerObject.name,
+        'ipAddr':actualServerObject.ipAddr,
+        'password':actualServerObject.password,
+    })
+    return render(request,'serverInfo.html',{'form':form})
